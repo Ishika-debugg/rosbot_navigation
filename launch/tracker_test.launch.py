@@ -38,7 +38,7 @@ def generate_launch_description():
     camera_frame_arg = DeclareLaunchArgument(
         'camera_optical_frame', default_value='camera_color_optical_frame')
     find_object_gui_arg = DeclareLaunchArgument(
-        'gui', default_value='true')
+        'gui', default_value='false')
 
     # configurations
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -66,7 +66,7 @@ def generate_launch_description():
         ]
     )
 
-    # find_object_2d node
+    # find_object_2d node with environment variable to force offscreen rendering
     find_object_node = Node(
         package='find_object_2d',
         executable='find_object_2d',
@@ -75,7 +75,7 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': use_sim_time,
             'subscribe_depth': True,
-            'gui': find_object_gui,
+            'gui': False,  # Explicitly set to False
             'session_path': session_file_path
         }],
         remappings=[
@@ -83,7 +83,9 @@ def generate_launch_description():
             ('rgb/image_rect_color', repeater_output_image_topic),
             ('depth_registered/image_raw', node2_depth_topic),
             ('depth_registered/camera_info', node2_camera_info_topic),
-        ]
+        ],
+        # Add environment variables to force offscreen rendering
+        additional_env={'QT_QPA_PLATFORM': 'offscreen'}
     )
 
     # hazard marker detector node
@@ -105,14 +107,14 @@ def generate_launch_description():
         }]
     )
 
-    # RViz launch
-    rviz_launch = ExecuteProcess(
-        cmd=[
-            'rviz2', '-d',
-            '/home/user/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/rviz/gazebo.rviz'
-        ],
-        output='screen'
-    )
+    # Remove RViz launch for now since it's not installed
+    # rviz_launch = ExecuteProcess(
+    #     cmd=[
+    #         'rviz2', '-d',
+    #         '/home/user/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/rviz/gazebo.rviz'
+    #     ],
+    #     output='screen'
+    # )
 
     # position tracker node (delayed start)
     delayed_position_tracker = TimerAction(
@@ -143,6 +145,6 @@ def generate_launch_description():
         repeater_node,
         find_object_node,
         hazard_marker_node,
-        rviz_launch,
+        # rviz_launch,  # Commented out since it's not installed
         delayed_position_tracker,
     ])
