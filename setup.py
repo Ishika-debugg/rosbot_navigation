@@ -30,8 +30,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'node2 = rosbot_navigation.node2:main',
-            'position_tracker_node = rosbot_navigation.position_tracker_node:main',
+            'node1 = navigation_package.node1:main',
+            'node2 = navigation_package.node2:main',
+            'position_tracker_node = navigation_package.position_tracker_node:main',
         ],
     },
 )
