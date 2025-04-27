@@ -15,7 +15,7 @@ from sensor_msgs.msg import LaserScan
 
 class HazardMarkerDetector(Node):
     def _init_(self):
-        super()._init_('object_logger_from_stamped')
+        super()._init_('hazard_marker_detector')
 
         self.create_subscription(ObjectsStamped, '/objectsStamped', self.object_callback, 10)
         self.marker_pub = self.create_publisher(Marker, '/hazards', 10)
